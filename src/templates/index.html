@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传</title>
+    <style>
+        .upload-area {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            line-height: 200px;
+            text-align: center;
+            margin: 10px;
+        }
+        .upload-area:hover {
+            background-color: #f0f0f0;
+        }
+        #download-link {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-area" id="upload-area">
+        点击或拖拽文件到此处上传
+    </div>
+    <a id="download-link" href="#">下载转换后的文件</a>
+    <script>
+        const uploadArea = document.getElementById('upload-area');
+        const downloadLink = document.getElementById('download-link');
+
+        uploadArea.addEventListener('dragover', (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+        });
+
+        uploadArea.addEventListener('drop', (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        uploadArea.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.bpmn';
+            input.onchange = (e) => {
+                const files = e.target.files;
+                handleFiles(files);
+            };
+            input.click();
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                if (files[0].name.endsWith('.bpmn')) {
+                    uploadFile(files[0]);
+                } else {
+                    alert('仅允许上传.bpmn后缀的文件');
+                }
+            }
+        }
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.filename) {
+                    downloadLink.href = `/uploads/${data.filename}`;
+                    downloadLink.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

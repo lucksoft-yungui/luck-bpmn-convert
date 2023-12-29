@@ -80,7 +80,8 @@ def process_bpmn(file_path):
                     doc_json = json.loads(documentation.text)
                     userGroups = doc_json.get('userGroups', [])
 
-                    collection_value = '_u_' if all('sclassKey' not in u for u in userGroups) else '_g_'
+                    collection_value =  '_t_' + userTask_id
+                    collection_value += '_u_' if all('sclassKey' not in u for u in userGroups) else '_g_'
                     collection_value += '_or_'.join(str(u.get('sgroupKey' if collection_value.startswith('_g_') else 'indocno', '')) for u in userGroups)
 
                     multiInstanceLoop = etree.Element('{http://www.omg.org/spec/BPMN/20100524/MODEL}multiInstanceLoopCharacteristics', {

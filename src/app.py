@@ -85,7 +85,7 @@ def process_bpmn(file_path):
                     collection_value += '_or_'.join(str(u.get('sgroupKey' if collection_value.startswith('_g_') else 'indocno', '')) for u in userGroups)
 
                     multiInstanceLoop = etree.Element('{http://www.omg.org/spec/BPMN/20100524/MODEL}multiInstanceLoopCharacteristics', {
-                        'isSequential': "true",
+                        # 'isSequential': "true",
                         '{http://activiti.org/bpmn}elementVariable': f"assignee_{userTask_id}",
                         '{http://activiti.org/bpmn}collection': collection_value
                     })
